@@ -7,4 +7,4 @@ scalaVersion := "2.13.1"
 isSnapshot := true
 
 scalaJSUseMainModuleInitializer := true
-libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.7"
+libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.0-M2" % "test"
