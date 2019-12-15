@@ -14,6 +14,8 @@ class JsonSerializationExamples extends AnyFunSuite {
       {
          "full-name": "Sarek",
          "age": 100,
+         "knows-scala": false,
+         "knows-kotlin": true,
          "favourite-colours": ["red", "green", "blue"],
          "friends": [
             {
@@ -30,15 +32,17 @@ class JsonSerializationExamples extends AnyFunSuite {
                ]
             }
          ],
-         "record-update-timestamp": "${currentTimestamp}"
+         "record-update-timestamp": "$currentTimestamp"
       }
       """)
     val person = json.asInstanceOf[PersonDto]
-    assert(person.`full-name` == "Sarek")
-    assert(person.age == 100)
+    assert(person.`full-name`.contains("Sarek"))
+    assert(person.age.contains(100))
+    assert(person.`knows-scala`.contains(false))
+    assert(person.`knows-kotlin`) // <-- this is not Option-like type but will fail when undefined
     assert(person.`favourite-colours`.toList == List("red", "green", "blue"))
     assert(person.friends.length == 1)
-    assert(person.`record-update-timestamp` == currentTimestamp.toString) //js doesn't handle large integer numbers
+    assert(person.`record-update-timestamp`.contains(currentTimestamp.toString)) //js doesn't handle large integer numbers
     assert(js.isUndefined(person.friends(0).`favourite-colours`))
     assert(person.`full-name` + " knows " + person.friends(0).`full-name` + " who knows " +
       person.friends(0).friends(0).`full-name` == "Sarek knows Spock who knows James Kirk")
@@ -47,8 +51,8 @@ class JsonSerializationExamples extends AnyFunSuite {
   test("javascript undefined values are handled nicely with union types") {
     val person = JSON.parse("""{"age": 100}""").asInstanceOf[PersonDto]
     assert(js.isUndefined(person.`full-name`))
-    assert(person.`full-name`.orElse("unknown citizen") == "unknown citizen")
-    assert(person.age.orElse(3333) == 100)
+    assert(person.`full-name`.getOrElse("unknown citizen") == "unknown citizen")
+    assert(person.age.getOrElse(3333) == 100)
 
     // but will fail for a field that doesn't assume undefined value
     assertThrows[Throwable] {
@@ -70,10 +74,10 @@ class JsonSerializationExamples extends AnyFunSuite {
             }
           ]
         }""", renamedFields)
-    assert(person.`full-name` == "Zarek")
-    assert(person.age == 100)
-    assert(person.friends(0).`full-name` == "Spock")
-    assert(person.friends(0).age == 40)
+    assert(person.`full-name`.contains("Zarek"))
+    assert(person.age.contains(100))
+    assert(person.friends(0).`full-name`.contains("Spock"))
+    assert(person.friends(0).age.contains(40))
   }
 
   test("serializing object to JSON") {

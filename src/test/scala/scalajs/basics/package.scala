@@ -15,7 +15,7 @@ package object basics {
         for (prop <- js.Object.keys(obj.asInstanceOf[js.Object]) if rename.contains(prop)) {
           val (oldKey, newKey) = (prop, rename(prop))
           obj.updateDynamic(newKey)(obj.selectDynamic(oldKey))
-          js.special.delete(value, oldKey)
+          js.special.delete(obj, oldKey)
         }
       }
       value
