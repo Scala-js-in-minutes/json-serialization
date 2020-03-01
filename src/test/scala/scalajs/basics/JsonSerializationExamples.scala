@@ -7,7 +7,7 @@ import scala.scalajs.js.JSON
 
 class JsonSerializationExamples extends AnyFunSuite {
 
-  test("parsing JSON to a nested class hierarchy") {
+  test("parsing JSON to a nested object hierarchy") {
     val currentTimestamp = System.currentTimeMillis()
     val json = JSON.parse(
       s"""
